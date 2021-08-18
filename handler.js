@@ -1,6 +1,6 @@
 'use strict';
 const AWS = require('aws-sdk');
-const db = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+const db = new AWS.DynamoDB.DocumentClient({ apiVersion: '2019-11-21' });
 const uuid = require('uuid/v4');
 
 const postsTable = process.env.POSTS_TABLE;
@@ -17,6 +17,9 @@ function sortByDate(a, b) {
   } else return 1;
 }
 // Create a post
+// event= request, headers, body,
+//context= variaveis de ambiente e coisas da aws
+// callback retorno e erro
 module.exports.createPost = (event, context, callback) => {
   const reqBody = JSON.parse(event.body);
 
