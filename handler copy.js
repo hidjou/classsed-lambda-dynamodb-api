@@ -40,7 +40,7 @@ module.exports.createPost = (event, context, callback) => {
   const post = {
     id: uuid(),
     createdAt: new Date().toISOString(),
-    userId: 3,
+    userId: 2,
     title: reqBody.title,
     body: reqBody.body
   };
@@ -58,23 +58,10 @@ module.exports.createPost = (event, context, callback) => {
 };
 // Get all posts
 module.exports.getAllPosts = (event, context, callback) => {
-
-  const userId = JSON.parse(event.pathParameters.userId);
-
-  const params = {
-    TableName: postsTable,
-    IndexName: "userIdX",
-    KeyConditionExpression: "#userId = :userId",
-    ExpressionAttributeNames: {
-      "#userId": "userId"
-    },
-    ExpressionAttributeValues: {
-      ":userId": userId,
-    }
-  };
-
   return db
-    .query(params)
+    .scan({
+      TableName: postsTable
+    })
     .promise()
     .then((res) => {
       callback(null, response(200, res.Items.sort(sortByDate)));
