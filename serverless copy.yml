@@ -13,21 +13,7 @@ provider:
     - Effect: 'Allow'
       Action:
         - dynamodb:DescribeTable
-        - dynamodb:BatchGetItem
         - dynamodb:Scan
-        - dynamodb:Query
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        - 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.POSTS_TABLE}/*'
-    - Effect: 'Allow'
-      Action:
-        - dynamodb:DescribeTable
-        - dynamodb:BatchGetItem
-        - dynamodb:Scan
-        - dynamodb:Query
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
@@ -46,7 +32,7 @@ functions:
     handler: handler.getAllPosts
     events:
       - http:
-          path: /posts/users/{userId}
+          path: /posts
           method: get
   getPosts:
     handler: handler.getPosts
@@ -78,9 +64,6 @@ resources:
     PostsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
         AttributeDefinitions:
           - AttributeName: 'id'
             AttributeType: 'S'
@@ -95,10 +78,10 @@ resources:
           - IndexName: 'userIdX'
             KeySchema:
               - AttributeName: 'userId'
-                KeyType: 'HASH'
+                KeyType: 'RANGE'
             Projection:
               ProjectionType: 'ALL'
             ProvisionedThroughput:
-              ReadCapacityUnits: 5
-              WriteCapacityUnits: 5
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         TableName: ${self:custom.settings.POSTS_TABLE}
